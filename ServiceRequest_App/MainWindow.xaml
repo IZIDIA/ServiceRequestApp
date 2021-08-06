@@ -1,0 +1,1320 @@
+﻿<Window x:Class="ServiceRequest_App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ServiceRequest_App"
+        xmlns:wpfTool="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+         Title="EasyService" Height="680" Width="800"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize" WindowStyle="None" FontFamily="Microsoft Sans Serif"
+        >
+
+    <Window.Resources>
+
+        <Style x:Key="TB" TargetType="TextBox">
+            <Setter Property="Background" Value="#FF11141A"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Foreground" Value="#0090FF"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderBrush" Value="#FF2D333D"/>
+            <Setter Property="Padding" Value="10,0,0,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid x:Name="root" Height="{TemplateBinding Height}" Width="{TemplateBinding Width}" SnapsToDevicePixels="True">
+                            <Border x:Name="Background" BorderThickness="1" CornerRadius="2" Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"/>
+
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          BorderThickness="0"
+                                          Padding="{TemplateBinding Padding}"
+                                          IsTabStop="False"
+                                          Background="{x:Null}"
+                                          TextElement.Foreground="{TemplateBinding Foreground}"
+                                          />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="#FF383C44"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#FF1D578C"/>
+                                <Setter Property="Background" Value="#FF0F1116"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ComboboxButton" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Background" Value="#191919"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" BorderThickness="0" BorderBrush="Black"
+                                Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <EventTrigger RoutedEvent="PreviewMouseDown">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ThicknessAnimation Storyboard.TargetProperty="Margin"
+                                                            Duration="0:0:0.100" To="2,2,0,0"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="PreviewMouseUp">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ThicknessAnimation Storyboard.TargetProperty="Margin"
+                                                            Duration="0:0:0.100" To="0"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+    </Window.Resources>
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="655*"/>
+        </Grid.RowDefinitions>
+        <Grid x:Name="ToolBar"  Grid.Row="0" >
+            <Grid.Background>
+                <RadialGradientBrush RadiusY="11">
+                    <GradientStop Color="#0078D7" Offset="0.409"/>
+                    <GradientStop Color="#FF18191C" Offset="1"/>
+                </RadialGradientBrush>
+            </Grid.Background>
+            <Canvas Background="Transparent" HorizontalAlignment="Left" Width ="760" MouseDown="ToolBar_MouseDown">
+            </Canvas>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Image  Name="MinButton" Height="15" Width="15" Margin="0,0,5,0" MouseUp="MinButton_MouseUp">
+                    <Image.Style>
+                        <Style TargetType="{x:Type Image}">
+                            <Setter Property="Source" Value="source/hidden_nonact.png"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsMouseOver, ElementName=MinButton}"
+                                             Value="True">
+                                    <Setter Property="Source" Value="source/hidden_Act.png" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+                <Image Name="ExitButton" Height="15" Width="15"  Margin="0,0,2,0" MouseUp="ExitButton_MouseUp">
+                    <Image.Style>
+                        <Style TargetType="{x:Type Image}">
+                            <Setter Property="Source" Value="source/close_nonAct.png"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsMouseOver, ElementName=ExitButton}"
+                                             Value="True">
+                                    <Setter Property="Source" Value="source/close_Act.png" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </StackPanel>
+        </Grid>
+
+
+        <Grid x:Name="MainMenu" Grid.Row="1" Background="#212121">
+
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+
+            </Grid.ColumnDefinitions>
+
+
+
+            <Border Background="#191919" Grid.Column="0" Margin="10,10,10,0" Height="70" VerticalAlignment="Top">
+                <Border.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="8"/>
+                    </Style>
+                </Border.Resources>
+
+                <StackPanel x:Name="MainData">
+                    <Label x:Name="ipv4" Margin="10,10,10,0" Content="IP:" Foreground="White" FontSize="15" />
+                    <Label x:Name="hostName" Margin="10,0,5,0" Content="Host:" Foreground="White" FontSize="14" />
+                </StackPanel>
+            </Border>
+
+
+            <Border Background="#191919" Grid.Column="0" Margin="10,130,10,10">
+                <Border.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="8"/>
+                    </Style>
+                </Border.Resources>
+
+                <Grid x:Name="RequestList" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+
+
+                    <Label Grid.Row="0" Margin="5,1,0,0" Content="Ваши запросы:" Foreground="White" FontSize="15"/>
+
+                    <ListBox  BorderThickness="0" Grid.Row="1" x:Name="RequestsList" SelectionChanged="phonesList_SelectionChanged" Background="Transparent" Foreground="White" >
+                        <ListBox.ItemTemplate >
+                            <DataTemplate>
+                                <StackPanel  Margin="0,1,0,0" Orientation="Horizontal" Background="Transparent" Width="169">
+                                    <Image Width="30" Height="30" Source="{Binding Path=ImagePath}" />
+                                    <StackPanel VerticalAlignment="Center" Margin="10,0,0,0">
+                                        <TextBlock FontSize="15" Text="{Binding Path=Number}" HorizontalAlignment="Left" />
+                                        <TextBlock FontSize="15" Text="{Binding Path=Date}" HorizontalAlignment="Left" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+
+                </Grid>
+            </Border>
+
+
+            <Border Name="RefreshBtn" Grid.Column="0" Height="40" Width="40" HorizontalAlignment="Left" VerticalAlignment="Top"
+                Margin="10,85,0,0" CornerRadius="2" BorderThickness="1"
+                Background="Black">
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="BorderBrush" Value="#FF333842"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="#FF51555C"/>
+                            </Trigger>
+                            <EventTrigger RoutedEvent="PreviewMouseDown">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                    Duration="0:0:0.100" To="#FF333842"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="PreviewMouseUp">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                    Duration="0:0:0.100" To="#FF51555C"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <Button Style="{StaticResource ComboboxButton}" Click="Button_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Height="30" Width="30">
+                            <Image.Style>
+                                <Style TargetType="{x:Type Image}">
+                                    <Setter Property="Source" Value="source/NonActiveOpt.png"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsMouseOver , ElementName=RefreshBtn}" Value="True">
+                                            <Setter Property="Source" Value="source/ActiveOpt.png"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource 
+                                        FindAncestor,
+                                        AncestorType={x:Type Button}, AncestorLevel=1 }, 
+                                        Path=IsPressed}" Value="True">
+                                            <Setter Property="Source" Value="source/NonActiveOpt.png"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </StackPanel>
+                </Button>
+            </Border>
+
+
+            <Border CornerRadius="1" Grid.Column="1" Name="ButBorder_Delete" Width="65" Height="20" Margin="0,105,15,0" VerticalAlignment="Top" HorizontalAlignment="Right"
+                    BorderThickness="1" Background="Black">
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="BorderBrush" Value="#990C1C"/>
+                        <Style.Triggers>
+                            <EventTrigger RoutedEvent="PreviewMouseDown">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color" To="#990C1C" Duration="0:0:0.100"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="PreviewMouseUp">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color" To="#CC1023" Duration="0:0:0.100"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <Button x:Name="buttonDelete" Grid.Column="1" Content="Закрыть" FontSize="13" Foreground="White">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                            <Setter Property="Background" Value="#CC1023"/>
+                            <EventSetter Event="PreviewMouseUp" Handler="ButtonDelete_PreviewMouseUp"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Name="horder" BorderThickness="0" BorderBrush="Black"
+                                            Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#E81123"/>
+                                            </Trigger>
+                                            <EventTrigger RoutedEvent="PreviewMouseDown">
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <ThicknessAnimation Storyboard.TargetProperty="Margin"
+                                                                        Duration="0:0:0.100" To="2,2,0,0"/>
+
+                                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="#990C1C" Duration="0:0:0.0002"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                            <EventTrigger RoutedEvent="PreviewMouseUp">
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <ThicknessAnimation Storyboard.TargetProperty="Margin"
+                                                                        Duration="0:0:0.100" To="0"/>
+                                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="#CC1023" Duration="0:0:0.0002"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Border>
+
+
+
+
+            <Border x:Name="HelloMessage" CornerRadius="8"  Background="#191919" Grid.Column="1" VerticalAlignment="Top" Height="70" Margin="0,10,10,0" Grid.ColumnSpan="2">
+
+
+                <Canvas>
+
+
+                    <TextBox IsReadOnly="True" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                            TextWrapping="Wrap" x:Name="HelloText" FontSize="14" Text="Добрый день" Width="480" Height="60" Canvas.Left="10" Canvas.Top="5" Foreground="White" Background="Transparent"/>
+
+                    <Border Name="PhoneBorder" Grid.Row="1" Height="60" Width="60" Canvas.Right="10" Canvas.Top="5"
+                 CornerRadius="2" BorderThickness="1"
+                Background="Black">
+                        <Border.Style>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="BorderBrush" Value="#FF333842"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="BorderBrush" Value="#FF51555C"/>
+                                    </Trigger>
+                                    <EventTrigger RoutedEvent="PreviewMouseDown">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                    Duration="0:0:0.100" To="#FF333842"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                    <EventTrigger RoutedEvent="PreviewMouseUp">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                    Duration="0:0:0.100" To="#FF51555C"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Button Style="{StaticResource ComboboxButton}" Click="ButtonPhone_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Height="55" Width="55">
+                                    <Image.Style>
+                                        <Style TargetType="{x:Type Image}">
+                                            <Setter Property="Source" Value="source/nonActivePhone.png"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=IsMouseOver , ElementName=PhoneBorder}" Value="True">
+                                                    <Setter Property="Source" Value="source/phone.png"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource 
+                                        FindAncestor,
+                                        AncestorType={x:Type Button}, AncestorLevel=1 }, 
+                                        Path=IsPressed}" Value="True">
+                                                    <Setter Property="Source" Value="source/nonActivePhone.png"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                            </StackPanel>
+                        </Button>
+                    </Border>
+
+                </Canvas>
+
+            </Border>
+
+            <Border CornerRadius="1" Grid.Column="1" Name="ButBorder_Create" Width="180" Height="25" Margin="5,85,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"
+                    BorderThickness="1" Background="Black">
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="BorderBrush" Value="#4F9900"/>
+                        <Style.Triggers>
+                            <EventTrigger RoutedEvent="PreviewMouseDown">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color" To="#4F9900" Duration="0:0:0.100"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="PreviewMouseUp">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color" To="#6FD800" Duration="0:0:0.100"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <Button  x:Name="buttonCreate" Grid.Column="1" Content="Создать новую заявку" FontSize="16" Foreground="Black">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                            <Setter Property="Background" Value="#6FD800"/>
+                            <EventSetter Event="PreviewMouseUp" Handler="ButtonCreate_PreviewMouseUp"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Name="horder" BorderThickness="0" BorderBrush="Black"
+                                            Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#83FF00"/>
+                                            </Trigger>
+                                            <EventTrigger RoutedEvent="PreviewMouseDown">
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <ThicknessAnimation Storyboard.TargetProperty="Margin"
+                                                                        Duration="0:0:0.100" To="2,2,0,0"/>
+
+                                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="#4F9900" Duration="0:0:0.0002"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                            <EventTrigger RoutedEvent="PreviewMouseUp">
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <ThicknessAnimation Storyboard.TargetProperty="Margin"
+                                                                        Duration="0:0:0.100" To="0"/>
+                                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="#6FD800" Duration="0:0:0.0002"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Border>
+
+            <Border  x:Name="BorderForCheck" Grid.Column="1" Height="515" VerticalAlignment="Bottom" Background="#191919" Margin="0,0,10,10"
+                    CornerRadius="8" Grid.ColumnSpan="2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="180"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="215"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Width="180" Height="70" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Column="0" Orientation="Horizontal">
+                            <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Заявка №" Foreground="Gold" FontSize="23"/>
+                            <Label x:Name="RequestNumberOnForm" VerticalAlignment="Center" HorizontalAlignment="Center" Content="0" Foreground="LawnGreen" FontSize="24"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,100,0,0" Width="210" Height="50" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Column="0" Orientation="Horizontal">
+                            <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Статус: " Foreground="Gold" FontSize="19"/>
+                            <Label x:Name="StatusOnForm" VerticalAlignment="Center" HorizontalAlignment="Center" Content="В работе" Foreground="White" FontSize="20"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <Label VerticalAlignment="Top" HorizontalAlignment="Center" Content="Указанные данные: " Foreground="White" FontSize="16"/>
+                            <StackPanel Margin="0,0,0,0"  Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal">
+                                <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Имя пользователя:" Foreground="LightSlateGray" FontSize="12"/>
+                                <Label x:Name="UserNameOnForm" VerticalAlignment="Center" HorizontalAlignment="Center" Content="xxx" Foreground="White" FontSize="13"/>
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,0"  Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal">
+                                <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Телефон:" Foreground="LightSlateGray" FontSize="12"/>
+                                <Label x:Name="MobileOnForm" VerticalAlignment="Center" HorizontalAlignment="Center" Content="xxx" Foreground="White" FontSize="13"/>
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,0"  Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal">
+                                <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Почта:" Foreground="LightSlateGray" FontSize="12"/>
+                                <Label x:Name="EmailOnForm" VerticalAlignment="Center" HorizontalAlignment="Center" Content="xxx" Foreground="White" FontSize="13"/>
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,0"  Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal">
+                                <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Местоположение:" Foreground="LightSlateGray" FontSize="12"/>
+                                <Label x:Name="AreaOnForm" VerticalAlignment="Center" HorizontalAlignment="Center" Content="qqq" Foreground="White" FontSize="13"/>
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,0"  Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal">
+                                <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Проблема с текущем пк:" Foreground="LightSlateGray" FontSize="12"/>
+                                <Label x:Name="ProblemWithMyPcOnForm" VerticalAlignment="Center" HorizontalAlignment="Center" Content="xxx" Foreground="White" FontSize="13"/>
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,0"  Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal">
+                                <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Решить проблему в моём присутствии:" Foreground="LightSlateGray" FontSize="12"/>
+                                <Label x:Name="WithMePcOnForm" VerticalAlignment="Center" HorizontalAlignment="Center" Content="qqq" Foreground="White" FontSize="13"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Grid.Row="1">
+                        <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Текст заявки:" Foreground="Gold" FontSize="15"/>
+                        <TextBox VerticalScrollBarVisibility="Auto" IsReadOnly="True"  x:Name="CreateMessageOnForn" BorderThickness="1" TextWrapping="Wrap" AcceptsReturn="True" Foreground="White"  Background="Transparent"
+                     FontFamily="Arial" FontSize="14" VerticalAlignment="Top" Height="140" Width="550" Margin="0,0,0,0" Text="xxx">
+                        </TextBox>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2">
+                        <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Комментарии к заявке:" Foreground="Gold" FontSize="15"/>
+                        <TextBox IsReadOnly="True" x:Name="CommentsOnForn" BorderThickness="0" TextWrapping="Wrap" AcceptsReturn="True" Foreground="White" Background="Transparent"
+                     FontFamily="Arial" FontSize="14" VerticalAlignment="Top" Height="140" Width="550" Margin="0,0,0,0" Text="">
+                        </TextBox>
+                    </StackPanel>
+
+                </Grid>
+
+            </Border>
+
+
+
+
+            <Border Visibility="Hidden" x:Name="BorderForMessage" Grid.Column="1" Height="515" VerticalAlignment="Bottom" Background="#191919" Margin="0,0,10,10"
+                    CornerRadius="8" Grid.ColumnSpan="2">
+
+                <StackPanel>
+                    <Grid  VerticalAlignment="Top" Height="55" Margin="10,0,10,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <Label Content="Ваше имя:" Foreground="White" FontSize="14" Margin="0,0,0,0"></Label>
+                            <Grid>
+                                <TextBox  x:Name="userName"  HorizontalAlignment="Left" Width="250" Grid.Column="0"   Style="{StaticResource TB}" Margin="5,0,0,0" />
+                                <TextBlock IsHitTestVisible="False" FontSize="14" Text="Имя и фамилия.." 
+                      Margin="17,4,0,0"  Foreground="#FFC3C4C8">
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Text, ElementName=userName}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <Label Content="Контактный телефон:" Foreground="White" FontSize="14" Margin="0,0,0,0"></Label>
+                            <Grid>
+                                <TextBox  x:Name="userPhone"  HorizontalAlignment="Left" Width="250" Grid.Column="0"   Style="{StaticResource TB}" Margin="5,0,0,0" />
+                                <TextBlock IsHitTestVisible="False" FontSize="14" Text="Мобильный или рабочий.." 
+                      Margin="17,4,0,0"  Foreground="#FFC3C4C8">
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Text, ElementName=userPhone}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+
+
+
+
+                    <Grid HorizontalAlignment="Left" Width="550" Height="60" Margin="10,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel >
+                            <Label Content="*Местонахождение:" Foreground="White" FontSize="14" Margin="0,5,0,0"></Label>
+                            <Grid>
+                                <TextBox  x:Name="Area"  HorizontalAlignment="Left" Width="250" Grid.Column="0"   Style="{StaticResource TB}" Margin="5,0,0,0" />
+                                <TextBlock IsHitTestVisible="False" FontSize="14" Text="Здание, комната (кабинет).." 
+                      Margin="17,4,0,0"  Foreground="#FFC3C4C8">
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Text, ElementName=Area}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" >
+                            <Label Content="Электронная почта:" Foreground="White" FontSize="14" Margin="0,5,0,0"></Label>
+                            <Grid>
+                                <TextBox  x:Name="Email"  HorizontalAlignment="Left" Width="250" Grid.Column="0"   Style="{StaticResource TB}" Margin="5,0,0,0" />
+                                <TextBlock IsHitTestVisible="False" FontSize="14" Text="example@email.ru" 
+                      Margin="17,4,0,0"  Foreground="#FFC3C4C8">
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Text, ElementName=Email}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+
+
+
+                    <Grid HorizontalAlignment="Left" Width="550" Height="150" Margin="10,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+
+                        <StackPanel>
+                            <ToggleButton x:Name="solutionOne" Height="25" Width="265" HorizontalAlignment="Left"
+                          VerticalAlignment="Top" Margin="5,10,0,0" Content="Решить проблему в моём присутствии"
+                          Foreground="#FFC3C4C8" FontSize="13" Click="solutionOne_Click" >
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Border Height="20" Width="20" CornerRadius="2" HorizontalAlignment="Left"
+                                BorderThickness="1" Background="Black">
+                                                <Border.Style>
+                                                    <Style TargetType="{x:Type Border}">
+                                                        <Setter Property="BorderBrush" Value="#FF333842"/>
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="BorderBrush" Value="#FF51555C"/>
+                                                            </Trigger>
+                                                            <EventTrigger RoutedEvent="PreviewMouseDown">
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF333842"/>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </EventTrigger>
+                                                            <EventTrigger RoutedEvent="PreviewMouseUp">
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF51555C"/>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </EventTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <Image Margin="2">
+                                                    <Image.Style>
+                                                        <Style>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsChecked, RelativeSource=
+                                                {RelativeSource AncestorType={x:Type ToggleButton}}}" Value="true">
+                                                                    <Setter Property="Image.Source" Value="source/check.png"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Image.Style>
+                                                </Image>
+                                            </Border>
+                                            <ContentPresenter Content="{TemplateBinding Content}" Margin="5,0,0,0" VerticalAlignment="Center"
+                                          HorizontalAlignment="Left" />
+                                        </StackPanel>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <ToggleButton x:Name="solutionTwo" Height="25" Width="265" HorizontalAlignment="Left"
+                          VerticalAlignment="Top" Margin="5,0,0,0" Content="Решить проблему в моё отсутствие"
+                          Foreground="#FFC3C4C8" FontSize="13" Click="solutionTwo_Click" >
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Border Height="20" Width="20" CornerRadius="2" HorizontalAlignment="Left"
+                                BorderThickness="1" Background="Black">
+                                                <Border.Style>
+                                                    <Style TargetType="{x:Type Border}">
+                                                        <Setter Property="BorderBrush" Value="#FF333842"/>
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="BorderBrush" Value="#FF51555C"/>
+                                                            </Trigger>
+                                                            <EventTrigger RoutedEvent="PreviewMouseDown">
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF333842"/>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </EventTrigger>
+                                                            <EventTrigger RoutedEvent="PreviewMouseUp">
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF51555C"/>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </EventTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <Image Margin="2">
+                                                    <Image.Style>
+                                                        <Style>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsChecked, RelativeSource=
+                                                {RelativeSource AncestorType={x:Type ToggleButton}}}" Value="true">
+                                                                    <Setter Property="Image.Source" Value="source/check.png"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Image.Style>
+                                                </Image>
+                                            </Border>
+                                            <ContentPresenter Content="{TemplateBinding Content}" Margin="5,0,0,0" VerticalAlignment="Center"
+                                          HorizontalAlignment="Left" />
+                                        </StackPanel>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <ToggleButton x:Name="withMyPc" Height="30" Width="265" HorizontalAlignment="Left"
+                          VerticalAlignment="Top" Margin="5,5,0,0" Content="Проблема с текущем компьютером"
+                          Foreground="LawnGreen" FontSize="13" Click="withMyPc_Click" >
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Border Height="20" Width="20" CornerRadius="2" HorizontalAlignment="Left"
+                                BorderThickness="1" Background="Black">
+                                                <Border.Style>
+                                                    <Style TargetType="{x:Type Border}">
+                                                        <Setter Property="BorderBrush" Value="#FF333842"/>
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="BorderBrush" Value="#FF51555C"/>
+                                                            </Trigger>
+                                                            <EventTrigger RoutedEvent="PreviewMouseDown">
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF333842"/>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </EventTrigger>
+                                                            <EventTrigger RoutedEvent="PreviewMouseUp">
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF51555C"/>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </EventTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <Image Margin="2">
+                                                    <Image.Style>
+                                                        <Style>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsChecked, RelativeSource=
+                                                {RelativeSource AncestorType={x:Type ToggleButton}}}" Value="true">
+                                                                    <Setter Property="Image.Source" Value="source/check.png"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Image.Style>
+                                                </Image>
+                                            </Border>
+                                            <ContentPresenter Content="{TemplateBinding Content}" Margin="5,0,0,0" VerticalAlignment="Center"
+                                          HorizontalAlignment="Left" />
+                                        </StackPanel>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <StackPanel x:Name="PasswordPanel">
+                                <Label Content="Пароль пользователя (если имеется):" Foreground="White" FontSize="13" Margin="0,0,0,0"></Label>
+                                <Grid>
+                                    <TextBox  x:Name="Password"  HorizontalAlignment="Left" Width="250" Grid.Column="0"   Style="{StaticResource TB}" Margin="5,0,0,0" />
+                                    <TextBlock IsHitTestVisible="False" FontSize="14" Text="Ваш пароль.." 
+                      Margin="17,4,0,0"  Foreground="#FFC3C4C8">
+                                        <TextBlock.Style>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Text, ElementName=Password}" Value="">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+
+
+                        <Grid x:Name="WorkGraphic" Grid.Column="1">
+
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30"></RowDefinition>
+                                <RowDefinition Height="35"></RowDefinition>
+                                <RowDefinition Height="30"></RowDefinition>
+                            </Grid.RowDefinitions>
+
+
+                            <Label VerticalAlignment="Center" Margin="0,3,0,0"  Grid.Row="0" Content="График вашей работы:" Foreground="White" FontSize="14"/>
+
+
+
+                            <StackPanel x:Name="DataTable" Grid.Row="1" Orientation="Horizontal" >
+                                <ToggleButton x:Name="Monday" Height="32" Width="20" HorizontalAlignment="Left"
+                          VerticalAlignment="Top" Margin="10,0,0,0" Content="Пн"
+                          Foreground="LightGreen" FontSize="12"  >
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                            <StackPanel Orientation="Vertical">
+                                                <ContentPresenter Content="{TemplateBinding Content}" Margin="1,0,0,0" VerticalAlignment="Center"
+                                          HorizontalAlignment="Left" />
+                                                <Border Height="16" Width="16" CornerRadius="2" HorizontalAlignment="Left"
+                                BorderThickness="1" Background="Black" Margin="0,1,0,0">
+                                                    <Border.Style>
+                                                        <Style TargetType="{x:Type Border}">
+                                                            <Setter Property="BorderBrush" Value="#FF333842"/>
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="BorderBrush" Value="#FF51555C"/>
+                                                                </Trigger>
+                                                                <EventTrigger RoutedEvent="PreviewMouseDown">
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF333842"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </EventTrigger>
+                                                                <EventTrigger RoutedEvent="PreviewMouseUp">
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF51555C"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </EventTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <Image Margin="2">
+                                                        <Image.Style>
+                                                            <Style>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsChecked, RelativeSource=
+                                                {RelativeSource AncestorType={x:Type ToggleButton}}}" Value="true">
+                                                                        <Setter Property="Image.Source" Value="source/check.png"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Image.Style>
+                                                    </Image>
+                                                </Border>
+                                            </StackPanel>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                                <ToggleButton x:Name="Tuesday" Height="32" Width="20" HorizontalAlignment="Left"
+                          VerticalAlignment="Top" Margin="0,0,0,0" Content="Вт"
+                          Foreground="LightGreen" FontSize="12"  >
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                            <StackPanel Orientation="Vertical">
+                                                <ContentPresenter Content="{TemplateBinding Content}" Margin="1,0,0,0" VerticalAlignment="Center"
+                                          HorizontalAlignment="Left" />
+                                                <Border Margin="0,1,0,0" Height="16" Width="16" CornerRadius="2" HorizontalAlignment="Left"
+                                BorderThickness="1" Background="Black">
+                                                    <Border.Style>
+                                                        <Style TargetType="{x:Type Border}">
+                                                            <Setter Property="BorderBrush" Value="#FF333842"/>
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="BorderBrush" Value="#FF51555C"/>
+                                                                </Trigger>
+                                                                <EventTrigger RoutedEvent="PreviewMouseDown">
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF333842"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </EventTrigger>
+                                                                <EventTrigger RoutedEvent="PreviewMouseUp">
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF51555C"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </EventTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <Image Margin="2">
+                                                        <Image.Style>
+                                                            <Style>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsChecked, RelativeSource=
+                                                {RelativeSource AncestorType={x:Type ToggleButton}}}" Value="true">
+                                                                        <Setter Property="Image.Source" Value="source/check.png"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Image.Style>
+                                                    </Image>
+                                                </Border>
+                                            </StackPanel>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                                <ToggleButton x:Name="Wednesday" Height="32" Width="20" HorizontalAlignment="Left"
+                          VerticalAlignment="Top" Margin="0,0,0,0" Content="Ср"
+                          Foreground="LightGreen" FontSize="12" >
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                            <StackPanel Orientation="Vertical">
+                                                <ContentPresenter Content="{TemplateBinding Content}" Margin="1,0,0,0" VerticalAlignment="Center"
+                                          HorizontalAlignment="Left" />
+                                                <Border Margin="0,1,0,0" Height="16" Width="16" CornerRadius="2" HorizontalAlignment="Left"
+                                BorderThickness="1" Background="Black">
+                                                    <Border.Style>
+                                                        <Style TargetType="{x:Type Border}">
+                                                            <Setter Property="BorderBrush" Value="#FF333842"/>
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="BorderBrush" Value="#FF51555C"/>
+                                                                </Trigger>
+                                                                <EventTrigger RoutedEvent="PreviewMouseDown">
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF333842"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </EventTrigger>
+                                                                <EventTrigger RoutedEvent="PreviewMouseUp">
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF51555C"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </EventTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <Image Margin="2">
+                                                        <Image.Style>
+                                                            <Style>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsChecked, RelativeSource=
+                                                {RelativeSource AncestorType={x:Type ToggleButton}}}" Value="true">
+                                                                        <Setter Property="Image.Source" Value="source/check.png"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Image.Style>
+                                                    </Image>
+                                                </Border>
+                                            </StackPanel>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                                <ToggleButton x:Name="Thursday" Height="32" Width="20" HorizontalAlignment="Left"
+                          VerticalAlignment="Top" Margin="0,0,0,0" Content="Чт"
+                          Foreground="LightGreen" FontSize="12"  >
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                            <StackPanel Orientation="Vertical">
+                                                <ContentPresenter Content="{TemplateBinding Content}" Margin="1,0,0,0" VerticalAlignment="Center"
+                                          HorizontalAlignment="Left" />
+                                                <Border Margin="0,1,0,0" Height="16" Width="16" CornerRadius="2" HorizontalAlignment="Left"
+                                BorderThickness="1" Background="Black">
+                                                    <Border.Style>
+                                                        <Style TargetType="{x:Type Border}">
+                                                            <Setter Property="BorderBrush" Value="#FF333842"/>
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="BorderBrush" Value="#FF51555C"/>
+                                                                </Trigger>
+                                                                <EventTrigger RoutedEvent="PreviewMouseDown">
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF333842"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </EventTrigger>
+                                                                <EventTrigger RoutedEvent="PreviewMouseUp">
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF51555C"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </EventTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <Image Margin="2">
+                                                        <Image.Style>
+                                                            <Style>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsChecked, RelativeSource=
+                                                {RelativeSource AncestorType={x:Type ToggleButton}}}" Value="true">
+                                                                        <Setter Property="Image.Source" Value="source/check.png"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Image.Style>
+                                                    </Image>
+                                                </Border>
+                                            </StackPanel>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                                <ToggleButton x:Name="Friday" Height="32" Width="20" HorizontalAlignment="Left"
+                          VerticalAlignment="Top" Margin="0,0,0,0" Content="Пт"
+                          Foreground="LightGreen" FontSize="12" >
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                            <StackPanel Orientation="Vertical">
+                                                <ContentPresenter Content="{TemplateBinding Content}" Margin="1,0,0,0" VerticalAlignment="Center"
+                                          HorizontalAlignment="Left" />
+                                                <Border Margin="0,1,0,0" Height="16" Width="16" CornerRadius="2" HorizontalAlignment="Left"
+                                BorderThickness="1" Background="Black">
+                                                    <Border.Style>
+                                                        <Style TargetType="{x:Type Border}">
+                                                            <Setter Property="BorderBrush" Value="#FF333842"/>
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="BorderBrush" Value="#FF51555C"/>
+                                                                </Trigger>
+                                                                <EventTrigger RoutedEvent="PreviewMouseDown">
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF333842"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </EventTrigger>
+                                                                <EventTrigger RoutedEvent="PreviewMouseUp">
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF51555C"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </EventTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <Image Margin="2">
+                                                        <Image.Style>
+                                                            <Style>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsChecked, RelativeSource=
+                                                {RelativeSource AncestorType={x:Type ToggleButton}}}" Value="true">
+                                                                        <Setter Property="Image.Source" Value="source/check.png"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Image.Style>
+                                                    </Image>
+                                                </Border>
+                                            </StackPanel>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                                <ToggleButton x:Name="Saturday" Height="32" Width="20" HorizontalAlignment="Left"
+                          VerticalAlignment="Top" Margin="0,0,0,0" Content="Сб"
+                          Foreground="PaleVioletRed" FontSize="12"  >
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                            <StackPanel Orientation="Vertical">
+                                                <ContentPresenter Content="{TemplateBinding Content}" Margin="1,0,0,0" VerticalAlignment="Center"
+                                          HorizontalAlignment="Left" />
+                                                <Border Margin="0,1,0,0" Height="16" Width="16" CornerRadius="2" HorizontalAlignment="Left"
+                                BorderThickness="1" Background="Black">
+                                                    <Border.Style>
+                                                        <Style TargetType="{x:Type Border}">
+                                                            <Setter Property="BorderBrush" Value="#FF333842"/>
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="BorderBrush" Value="#FF51555C"/>
+                                                                </Trigger>
+                                                                <EventTrigger RoutedEvent="PreviewMouseDown">
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF333842"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </EventTrigger>
+                                                                <EventTrigger RoutedEvent="PreviewMouseUp">
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF51555C"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </EventTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <Image Margin="2">
+                                                        <Image.Style>
+                                                            <Style>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsChecked, RelativeSource=
+                                                {RelativeSource AncestorType={x:Type ToggleButton}}}" Value="true">
+                                                                        <Setter Property="Image.Source" Value="source/check.png"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Image.Style>
+                                                    </Image>
+                                                </Border>
+                                            </StackPanel>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                                <ToggleButton x:Name="Sunday" Height="32" Width="20" HorizontalAlignment="Left"
+                          VerticalAlignment="Top" Margin="0,0,0,0" Content="Вс"
+                          Foreground="PaleVioletRed" FontSize="12"  >
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                            <StackPanel Orientation="Vertical">
+                                                <ContentPresenter Content="{TemplateBinding Content}" Margin="1,0,0,0" VerticalAlignment="Center"
+                                          HorizontalAlignment="Left" />
+                                                <Border Margin="0,1,0,0" Height="16" Width="16" CornerRadius="2" HorizontalAlignment="Left"
+                                BorderThickness="1" Background="Black">
+                                                    <Border.Style>
+                                                        <Style TargetType="{x:Type Border}">
+                                                            <Setter Property="BorderBrush" Value="#FF333842"/>
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="BorderBrush" Value="#FF51555C"/>
+                                                                </Trigger>
+                                                                <EventTrigger RoutedEvent="PreviewMouseDown">
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF333842"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </EventTrigger>
+                                                                <EventTrigger RoutedEvent="PreviewMouseUp">
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                    Duration="0:0:0.100" To="#FF51555C"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </EventTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <Image Margin="2">
+                                                        <Image.Style>
+                                                            <Style>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsChecked, RelativeSource=
+                                                {RelativeSource AncestorType={x:Type ToggleButton}}}" Value="true">
+                                                                        <Setter Property="Image.Source" Value="source/check.png"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Image.Style>
+                                                    </Image>
+                                                </Border>
+                                            </StackPanel>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+
+
+
+                            </StackPanel>
+
+
+                            <StackPanel Orientation="Horizontal" Grid.Row="2">
+                                <Label VerticalAlignment="Center" Content="C:" Foreground="White" FontSize="14"/>
+                                <wpfTool:TimePicker x:Name="TimeFrom" VerticalAlignment="Center" Width="80" Height="25" Background="Transparent" Foreground="AliceBlue"/>
+
+
+                                <Label Margin="10,0,0,0" VerticalAlignment="Center" Content="До:" Foreground="White" FontSize="14"/>
+                                <wpfTool:TimePicker x:Name="TimeTo" VerticalAlignment="Center" Width="80" Height="25" Background="Transparent" Foreground="AliceBlue"/>
+                            </StackPanel>
+
+                        </Grid>
+
+                    </Grid>
+
+
+
+
+
+                    <Border Background="White" Height="230" Width="560" Margin="0,10,0,0" CornerRadius="5" VerticalAlignment="Bottom">
+                        <Grid>
+                            <TextBox VerticalScrollBarVisibility="Auto" x:Name="CreateMessage" BorderThickness="0" TextWrapping="Wrap" AcceptsReturn="True" Background="Transparent"
+                     FontFamily="Arial" FontSize="15" VerticalAlignment="Top" Height="185" Width="550" Margin="0,5,0,0" >
+                            </TextBox>
+                            <TextBlock IsHitTestVisible="False" FontSize="15" Text="Опишите вашу проблему..." 
+                         Margin="7,5,0,0" VerticalAlignment="Top" Foreground="#6D6D6D">
+                                <TextBlock.Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, ElementName=CreateMessage}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <Border Name="ButBorder" Width="130" Height="25" Margin="0,10,5,5" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                    BorderThickness="1" Background="#FF0E3A59">
+                                <Border.Style>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="BorderBrush" Value="#FF00AEFF"/>
+                                        <Style.Triggers>
+                                            <EventTrigger RoutedEvent="PreviewMouseDown">
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color" To="#FF095486" Duration="0:0:0.100"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                            <EventTrigger RoutedEvent="PreviewMouseUp">
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color" To="#FF00AEFF" Duration="0:0:0.100"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Button x:Name="buttonSend" Grid.Column="1" Content="Отправить" FontSize="17" Foreground="White">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                            <Setter Property="Background" Value="#FF0E86CA"/>
+                                            <EventSetter Event="PreviewMouseUp" Handler="ButtonSend_PreviewMouseUp"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Name="horder" BorderThickness="0" BorderBrush="Black"
+                                            Background="{TemplateBinding Background}">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="Background" Value="#FF00AEFF"/>
+                                                            </Trigger>
+                                                            <EventTrigger RoutedEvent="PreviewMouseDown">
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <ThicknessAnimation Storyboard.TargetProperty="Margin"
+                                                                        Duration="0:0:0.100" To="2,2,0,0"/>
+
+                                                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="#FF095386" Duration="0:0:0.0002"/>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </EventTrigger>
+                                                            <EventTrigger RoutedEvent="PreviewMouseUp">
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <ThicknessAnimation Storyboard.TargetProperty="Margin"
+                                                                        Duration="0:0:0.100" To="0"/>
+                                                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="#FF0E86CA" Duration="0:0:0.0002"/>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </EventTrigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </Border>
+                        </Grid>
+                    </Border>
+
+
+
+                </StackPanel>
+
+            </Border>
+
+
+        </Grid>
+    </Grid>
+</Window>
